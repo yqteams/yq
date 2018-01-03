@@ -1,12 +1,12 @@
 {
-    "name": "yqTeams/yq",
+    "name": "yqteams/yq",
     "description": "php extend code",
     "keywords": ["yq"],
     "homepage": "https://github.com/yqteams/yq",
     "license": "MIT",
     "authors": [
         {
-            "name": "yqTeams",
+            "name": "yqteams",
             "email": "btq@baitanquan.com"
         }
     ],
