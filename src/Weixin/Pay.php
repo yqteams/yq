@@ -204,10 +204,10 @@ class Pay
         $sign = $this->makeSign($res);
         if($res['sign'] !== $sign) {
             $this->reNotify('FAIL', 'sign error');
-            return call_user_func($callback, $res, 10002)
+            return call_user_func($callback, $res, 10002);
         }
 
-        $code = call_user_func($callback, $res, 0)
+        $code = call_user_func($callback, $res, 0);
         if ($code===true) {
             $this->reNotify();
         } else {
