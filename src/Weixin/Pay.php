@@ -111,6 +111,7 @@ class Pay
             'total_fee' => $inputs['total_fee'], //价格 元
             'notify_url' => $inputs['notify_url'], //充值成功回调地址
             'trade_type' => $inputs['trade_type'], //交易类型 JSAPI，NATIVE，APP
+            'attach'       => $inputs['attach'], //附加数据，在查询API和支付通知中原样返回，可作为自定义参数使用。
         ];
 
         // 针对不同的下单类型进行参数设置
@@ -136,7 +137,7 @@ class Pay
             'ssl_cert_pem' => $this->yqweixin->config('ssl_cert_pem'),
             'ssl_key_pem' => $this->yqweixin->config('ssl_key_pem'),
         ];
-        $res = YqCurl::curl($url, $xml, 1, 1, 10, true, $cert);
+        $res = YqCurl::curl($url, $xml, 1, 1, 10, false, $cert);
         if (!$res) {
             return false;
         }
@@ -145,7 +146,6 @@ class Pay
 
         // 校验是否成功
         if ($res['return_code'] !== 'SUCCESS') {
-//            YqLog::log($res);
             return false;
         }
 
