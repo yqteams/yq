@@ -185,7 +185,7 @@ class Pay
      * https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_7
      * @param  closure $callback($data, $type) 用户自定义处理闭包函数
      * data为支付通知数据数组
-     * type为调用前处理结果 1为成功 10001为return_code不为SUCCESS，10002为签名对不上
+     * type为调用前处理结果 0为成功 10001为return_code不为SUCCESS，10002为签名对不上
      * @return void
      */
     public function notify($callback)
@@ -196,17 +196,18 @@ class Pay
         $res = $this->fromXml($xml);
         if ($res['return_code'] != 'SUCCESS') {
             $this->reNotify('FAIL', 'return code not success');
-            return $callback($res, 10001);
+
+            return call_user_func($callback, $res, 10001)
         }
 
         // 校验签名
         $sign = $this->makeSign($res);
         if($res['sign'] !== $sign) {
             $this->reNotify('FAIL', 'sign error');
-            return $callback($res, 10002);
+            return call_user_func($callback, $res, 10002)
         }
 
-        $code = $callback($res, 1);
+        $code = call_user_func($callback, $res, 0)
         if ($code===true) {
             $this->reNotify();
         } else {
