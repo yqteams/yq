@@ -21,14 +21,14 @@ class Pay
 
     /**
      * 格式化参数格式化成url参数
-     * @param  array  $data 待格式化数据
+     * @param  array $data 待格式化数据
      * @return string
      */
     private function toUrlParams(array $data)
     {
         $buff = "";
         foreach ($data as $k => $v) {
-            if($k != "sign" && $v != "" && !is_array($v)) {
+            if ($k != "sign" && $v != "" && !is_array($v)) {
                 $buff .= $k . "=" . $v . "&";
             }
         }
@@ -39,7 +39,7 @@ class Pay
 
     /**
      * 数据签名
-     * @param  array  $data 待签名数据
+     * @param  array $data 待签名数据
      * @return string
      */
     public function makeSign(array $data)
@@ -49,7 +49,7 @@ class Pay
         $string = $this->toUrlParams($data);
 
         // 签名步骤二：在string后加入KEY
-        $string = $string . "&key=".$this->yqweixin->config('key');
+        $string = $string . "&key=" . $this->yqweixin->config('key');
 
         // 签名步骤三：MD5加密
         $string = md5($string);
@@ -62,7 +62,7 @@ class Pay
 
     /**
      * 将数据转为xml字符串
-     * @param  array  $data 待转数据
+     * @param  array $data 待转数据
      * @return string
      */
     private function toXml(array $data)
@@ -70,12 +70,12 @@ class Pay
         $xml = "<xml>";
         foreach ($data as $key => $val) {
             if (is_numeric($val)) {
-                $xml.="<".$key.">".$val."</".$key.">";
-            }else{
-                $xml.="<".$key."><![CDATA[".$val."]]></".$key.">";
+                $xml .= "<" . $key . ">" . $val . "</" . $key . ">";
+            } else {
+                $xml .= "<" . $key . "><![CDATA[" . $val . "]]></" . $key . ">";
             }
         }
-        $xml.="</xml>";
+        $xml .= "</xml>";
         return $xml;
     }
 
@@ -103,14 +103,14 @@ class Pay
     {
         // 必填参数
         $params = [
-            'appid' => $this->yqweixin->config('appid'), //公众账号ID
-            'mch_id' => $this->yqweixin->config('mch_id'), //商户号
-            'nonce_str' => YqExtend::uniqid32(), //随机字符串
-            'body' => $inputs['body'], //商品描述
+            'appid'        => $this->yqweixin->config('appid'), //公众账号ID
+            'mch_id'       => $this->yqweixin->config('mch_id'), //商户号
+            'nonce_str'    => YqExtend::uniqid32(), //随机字符串
+            'body'         => $inputs['body'], //商品描述
             'out_trade_no' => $inputs['out_trade_no'], //我方订单
-            'total_fee' => $inputs['total_fee'], //价格 元
-            'notify_url' => $inputs['notify_url'], //充值成功回调地址
-            'trade_type' => $inputs['trade_type'], //交易类型 JSAPI，NATIVE，APP
+            'total_fee'    => $inputs['total_fee'], //价格 元
+            'notify_url'   => $inputs['notify_url'], //充值成功回调地址
+            'trade_type'   => $inputs['trade_type'], //交易类型 JSAPI，NATIVE，APP
             'attach'       => $inputs['attach'], //附加数据，在查询API和支付通知中原样返回，可作为自定义参数使用。
         ];
 
@@ -118,7 +118,7 @@ class Pay
         switch ($inputs['trade_type']) {
             case 'JSAPI':
                 $params['spbill_create_ip'] = YqExtend::getIP(); //客户端ip
-                $params['openid'] = $inputs['openid']; //用户openid
+                $params['openid']           = $inputs['openid']; //用户openid
                 break;
             case 'APP':
                 $params['spbill_create_ip'] = YqExtend::getIP(); //客户端ip
@@ -131,13 +131,13 @@ class Pay
         // 签名
         $params['sign'] = $this->makeSign($params);
 
-        $xml = $this->toXml($params);
-        $url = "https://api.mch.weixin.qq.com/pay/unifiedorder";
+        $xml  = $this->toXml($params);
+        $url  = "https://api.mch.weixin.qq.com/pay/unifiedorder";
         $cert = [
             'ssl_cert_pem' => $this->yqweixin->config('ssl_cert_pem'),
-            'ssl_key_pem' => $this->yqweixin->config('ssl_key_pem'),
+            'ssl_key_pem'  => $this->yqweixin->config('ssl_key_pem'),
         ];
-        $res = YqCurl::curl($url, $xml, 1, 1, 10, false, $cert);
+        $res  = YqCurl::curl($url, $xml, 1, 1, 10, false, $cert);
         if (!$res) {
             return false;
         }
@@ -151,7 +151,7 @@ class Pay
 
         // 校验签名
         $sign = $this->makeSign($res);
-        if($res['sign'] !== $sign) {
+        if ($res['sign'] !== $sign) {
             return false;
         }
 
@@ -166,13 +166,13 @@ class Pay
      * @param  string $msg  错误原因
      * @return void
      */
-    private function reNotify($code='SUCCESS', $msg='OK')
+    private function reNotify($code = 'SUCCESS', $msg = 'OK')
     {
         $params = [
             'return_code' => $code,
-            'return_msg' => $msg
+            'return_msg'  => $msg,
         ];
-        if ($code==='SUCCESS') {
+        if ($code === 'SUCCESS') {
             $params['sign'] = $this->makeSign($params);
         }
         $xml = $this->toXml($params);
@@ -183,9 +183,9 @@ class Pay
     /**
      * 支付结果通知
      * https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_7
-     * @param  closure $callback($data, $type) 用户自定义处理闭包函数
-     * data为支付通知数据数组
-     * type为调用前处理结果 0为成功 10001为return_code不为SUCCESS，10002为签名对不上
+     * @param  closure $callback ($data, $type) 用户自定义处理闭包函数
+     *                           data为支付通知数据数组
+     *                           type为调用前处理结果 0为成功 10001为return_code不为SUCCESS，10002为签名对不上
      * @return void
      */
     public function notify($callback)
@@ -202,13 +202,13 @@ class Pay
 
         // 校验签名
         $sign = $this->makeSign($res);
-        if($res['sign'] !== $sign) {
+        if ($res['sign'] !== $sign) {
             $this->reNotify('FAIL', 'sign error');
             return call_user_func($callback, $res, 10002);
         }
 
         $code = call_user_func($callback, $res, 0);
-        if ($code===true) {
+        if ($code === true) {
             $this->reNotify();
         } else {
             $this->reNotify('FAIL', 'handle error');
