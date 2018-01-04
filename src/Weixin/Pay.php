@@ -197,7 +197,7 @@ class Pay
         if ($res['return_code'] != 'SUCCESS') {
             $this->reNotify('FAIL', 'return code not success');
 
-            return call_user_func($callback, $res, 10001)
+            return call_user_func($callback, $res, 10001);
         }
 
         // 校验签名
