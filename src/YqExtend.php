@@ -58,6 +58,22 @@ class YqExtend
     }
 
     /**
+     * 随机拼接字母
+     * @param  integer $len 拼接长度
+     * @return string
+     */
+    public static function getRandomLetter($len=16)
+    {
+        $allstr = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
+        $str = '';
+        $max = strlen($allstr)-1;
+        for($i=0;$i<$len;++$i){
+            $str .= $allstr[mt_rand(0,$max)];
+        }
+        return $str;
+    }
+
+    /**
      * 随机拼接数字
      * @param  integer $len 拼接长度
      * @return string
@@ -85,13 +101,19 @@ class YqExtend
 
     /**
      * 得到一个唯一值，可用于订单等，此接口可视化强，但高并发时有极小的概率出现相同值
+     * 标识 20180105 231106 013118 随机英文字母补全到32位
+     * @param  string $flag 标识
      * @return string
      */
-    public static function uniqid()
+    public static function uniqid($flag='yq')
     {
         $num = floatval(microtime()) * 1000000;
-        $drift = 6;
-        return date('ymdHis') . str_pad($num, $drift, "0", STR_PAD_LEFT);
+        $id = $flag . date('YmdHis') . str_pad($num, 6, "0", STR_PAD_LEFT);
+        $diff = 32;
+        if (strlen($id)<$diff) {
+            $id .= self::getRandomLetter($diff-strlen($id));
+        }
+        return strtolower($id);
     }
 
     /**
