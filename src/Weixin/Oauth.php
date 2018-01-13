@@ -3,6 +3,7 @@
 namespace YQ\Weixin;
 
 use YQ\Weixin\YqWeixin;
+use YQ\YqCurl;
 
 class Oauth
 {
