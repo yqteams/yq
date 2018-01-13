@@ -62,7 +62,7 @@ class Oauth
         $openid = $res['openid'];
 
         $url = "https://api.weixin.qq.com/sns/userinfo";
-        $params = "access_token={$access_token}&openid={$openid}&lang=zh_CN";
+        $params = "access_token={$user_access_token}&openid={$openid}&lang=zh_CN";
         $user = YqCurl::curl($url, $params, 0, 1);
         if (!$user) {
             return false;
