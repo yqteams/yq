@@ -101,17 +101,17 @@ class YqExtend
 
     /**
      * 得到一个唯一值，可用于订单等，此接口可视化强，但高并发时有极小的概率出现相同值
-     * 标识 20180105 231106 013118 随机英文字母补全到32位
-     * @param  string $flag 标识
+     * 标识(4位) 20180105 231106 013118(20位) 随机数字(8位) 补全到32位
+     * @param  integer $flag 标识
      * @return string
      */
-    public static function uniqid($flag='yq')
+    public static function uniqid($flag=1000)
     {
         $num = floatval(microtime()) * 1000000;
         $id = $flag . date('YmdHis') . str_pad($num, 6, "0", STR_PAD_LEFT);
         $diff = 32;
         if (strlen($id)<$diff) {
-            $id .= self::getRandomLetter($diff-strlen($id));
+            $id .= self::getRandomInt($diff-strlen($id));
         }
         return strtolower($id);
     }
