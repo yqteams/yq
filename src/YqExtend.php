@@ -113,7 +113,27 @@ class YqExtend
         if (strlen($id)<$diff) {
             $id .= self::getRandomInt($diff-strlen($id));
         }
-        return strtolower($id);
+        return $id;
+    }
+
+    /**
+     * 创建16位订单号
+     * uniqid获取一个基于当前的微秒数生成的唯一不重复的字符串（但是他的前7位貌似很久才会发生变动，所以不用考虑可删除），
+     * 取其第8到13位。但是这个字符串里面有英文字母，用ord获取他的ASCII码，
+     * 但是最终得出字符长度不定，取前固定的几位，然后前面加上当前的年份和日期，
+     * 最后检查长度是否达到16位，不够则补随机数
+     *
+     * 这个方法生成的订单号，出现重复极少，可忽略，市面上不少技术采用此方式进行创建16位订单
+     * @return int
+     */
+    public static function buildOrderNo()
+    {
+        $id = date('ymd').substr(implode(NULL, array_map('ord', str_split(substr(uniqid(), 7, 13), 1))), 0, 10);
+        $diff = 16;
+        if (strlen($id)<$diff) {
+            $id .= self::getRandomInt($diff-strlen($id));
+        }
+        return $id;
     }
 
     /**
