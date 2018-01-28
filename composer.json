@@ -13,7 +13,8 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=7.0.0",
-        "elasticsearch/elasticsearch": "6.0.1"
+        "elasticsearch/elasticsearch": "6.0.1",
+        "monolog/monolog": "1.*"
     },
     "autoload": {
         "psr-4": {

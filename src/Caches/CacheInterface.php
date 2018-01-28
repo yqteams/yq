@@ -5,51 +5,38 @@ namespace YQ\Caches;
 interface CacheInterface
 {
     /**
-     * 读取缓存唯一key
-     * @param  string|array  $keys    检索key
-     * @return string
-     */
-    public function getUnid($keys);
-
-    /**
      * 是否存在某缓存
-     * @param  string|array         $keys       检索key
+     * @param  string   $key       检索key
      * @return boolean
      */
-    public function has($keys='');
+    public function has($key);
 
     /**
-     * 更新缓存数据
-     * @param  string|array         $keys       检索key
-     * @param  string|array|integer $value      缓存内容
-     * @return void
+     * 设置缓存数据
+     * @param  string   $key        保存的key,操作数据的唯一标识，不可重复
+     * @param  mixed    $value      缓存内容
+     * @param  integer  $minutes    缓存多少分钟
+     * @return boolean
      */
-    public function update($keys='', $value);
+    public function set($key, $value, $minutes);
 
     /**
      * 读取换成数据
-     * @param  string|array         $keys       检索key
-     * @return string|array|integer
+     * @param  string   $key       检索key
+     * @return mixed
      */
-    public function get($keys='');
-
-    /**
-     * 记忆读取缓存数据
-     * @param  string|array         $keys       检索key
-     * @return string|array|integer
-     */
-    public function remember($keys='');
+    public function get($key);
 
     /**
      * 从缓存中移除项目
-     * @param  string|array  $keys    检索key
-     * @return void
+     * @param  string  $key    检索key
+     * @return boolean
      */
-    public function forget($keys='');
+    public function forget($key);
 
     /**
-     * 清楚本前缀开头的所有缓存
-     * @return [type] [description]
+     * 移除所有缓存
+     * @return boolean
      */
     public function flush();
 }

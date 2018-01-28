@@ -37,11 +37,11 @@ class YqConfig
         $inds = explode('.', $key);
         $conf = $inds[0];
         if (!isset(self::$configs[$conf])) {
-            $path = dirname(__DIR__) . "/Config/{$conf}.php";
+            $path = dirname(__FILE__) . "/Config/{$conf}.php";
             if (!file_exists($path)) {
                 return $default;
             }
-            self::$configs[$conf] = require_once($path),
+            self::$configs[$conf] = require_once($path);
         }
 
         $array = self::$configs;
