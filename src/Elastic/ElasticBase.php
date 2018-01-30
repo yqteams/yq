@@ -241,6 +241,11 @@ class ElasticBase
                 'size'  => $size
             ],
         ];
-        return $this->client->search($params);
+        $search_list = $this->client->search($params);
+        if (!isset($search_list['hits']) || !isset($search_list['hits']['hits'])) {
+            return [];
+        }
+
+        return $search_list['hits']['hits'];
     }
 }
