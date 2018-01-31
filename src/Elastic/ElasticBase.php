@@ -10,7 +10,10 @@ class ElasticBase
      * 连接服务器信息
      * @var string
      */
-    protected $host = '127.0.0.1:9200';
+    protected $host = [
+        'host' => '127.0.0.1',
+        'port' => '9200',
+    ];
 
     /**
      * 索引(库名)
@@ -232,6 +235,11 @@ class ElasticBase
      */
     public function search(array $query, int $from=0, int $size=10)
     {
+        // 限制最多只能获取前1000条数据
+        if (($from+$size)>1000) {
+            return [];
+        }
+
         $params = [
             'index' => $this->index,
             'type'  => $this->type,
@@ -247,5 +255,33 @@ class ElasticBase
         }
 
         return $search_list['hits']['hits'];
+    }
+
+    //--------------------------------------------------------------------------
+    //以下接口是为了方便日常中经常用到的一个封装
+
+    /**
+     * OR 条件进行全文搜索
+     * @param  array       $params 待检索条件 {key=value, key2=value2}
+     * @param  int|integer $from   从哪个位置开始获取
+     * @param  int|integer $size   检索多少条数据
+     * @return array
+     */
+    public function shouldSearch(array $params, int $from=0, int $size=10)
+    {
+        $shoulds = [];
+        foreach ($params as $key => $value) {
+            $shoulds[] = ['match'=>[
+                $key => $value
+            ]];
+        }
+
+        $query = [
+            'bool' => [
+                'should' => $shoulds,
+            ],
+        ];
+
+        return $this->search($query, $from, $size);
     }
 }
