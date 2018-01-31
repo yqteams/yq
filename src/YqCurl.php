@@ -59,10 +59,15 @@ class YqCurl
 
         $response = curl_exec($ch);
 
-        if ($response === FALSE) {
+        if ($response === false) {
             return false;
         }
+
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if ($httpCode != 200) {
+            return false;
+        }
+
         $httpInfo = array_merge($httpInfo, curl_getinfo($ch));
         curl_close($ch);
         return $response;
