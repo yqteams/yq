@@ -20,13 +20,19 @@ class CacheBase
      * 使用缓存驱动
      * @var string
      */
-    protected $device = 'YQ\Caches\CacheFile';
+    protected $driver = 'CacheDriverFile';
+
+    /**
+     * 缓存驱动配置
+     * @var array
+     */
+    protected $driverParams = [];
 
     /**
      * 缓存驱动实例化对象
      * @var obj
      */
-    protected $deviceObj;
+    protected $driverObj;
 
     /**
      * 单例模式
@@ -49,8 +55,8 @@ class CacheBase
 
     public function __construct()
     {
-        $class = $this->device;
-        $this->deviceObj = new $class();
+        $class = 'YQ\\Caches\\Drivers\\' . $this->driver;
+        $this->driverObj = new $class($this->driverParams);
     }
 
     /**
@@ -78,7 +84,7 @@ class CacheBase
     public function has($key='')
     {
         $unid = $this->getUnid($key);
-        if (!$this->deviceObj->has($unid)) {
+        if (!$this->driverObj->has($unid, $this->prefix)) {
             return false;
         }
 
@@ -101,7 +107,7 @@ class CacheBase
             $minutes = 5256000;
         }
 
-        return $this->deviceObj->set($unid, $value, $minutes);
+        return $this->driverObj->set($unid, $value, $minutes, $this->prefix);
     }
 
     /**
@@ -112,7 +118,7 @@ class CacheBase
     public function get($key='')
     {
         $unid = $this->getUnid($key);
-        return $this->deviceObj->get($unid);
+        return $this->driverObj->get($unid, $this->prefix);
     }
 
     /**
@@ -124,7 +130,7 @@ class CacheBase
     {
         $unid = $this->getUnid($key);
         $minutes = $this->minutes;
-        $value = $this->deviceObj->get($unid);
+        $value = $this->driverObj->get($unid, $this->prefix);
         if (!$value) {
             $value = call_user_func(array($this, 'getReal'), $key);
             if (!$value) return;
@@ -152,7 +158,7 @@ class CacheBase
     public function forget($key='')
     {
         $unid = $this->getUnid($key);
-        return $this->deviceObj->forget($unid);
+        return $this->driverObj->forget($unid, $this->prefix);
     }
 
     /**
@@ -161,6 +167,6 @@ class CacheBase
      */
     public function flush()
     {
-        return $this->deviceObj->flush();
+        return $this->driverObj->flush($this->prefix);
     }
 }

@@ -1,12 +1,13 @@
 <?php
 
-namespace YQ\Caches;
+namespace YQ\Caches\Drivers;
 
-use YQ\Caches\CacheInterface;
+use YQ\Caches\Drivers\CacheDriverInterface;
 use YQ\YqConfig;
 
-class CacheFile implements CacheInterface
+class CacheDriverFile implements CacheDriverInterface
 {
+
     /**
      * 缓存文件存放路径
      * @var string
@@ -19,9 +20,18 @@ class CacheFile implements CacheInterface
      */
     protected $gcProbality = 100;
 
-    public function __construct()
+    /**
+     * 构造函数
+     * @param string $prefix 缓存前缀
+     * @param array  $params 初始化参数
+     */
+    public function __construct($params)
     {
-        $this->path = YqConfig::get('yq.cache_file_path');
+        if (isset($params['cache_file_path'])) {
+            $this->path = $params['cache_file_path'];
+        } else {
+            $this->path = YqConfig::get('yq.cache_file_path');
+        }
     }
 
     /**
@@ -109,9 +119,10 @@ class CacheFile implements CacheInterface
     /**
      * 是否存在某缓存
      * @param  string   $key       检索key
+     * @param  string   $prefix    缓存前缀
      * @return boolean
      */
-    public function has($key)
+    public function has($key, $prefix)
     {
         $key = strval($key);
         $cache_file = $this->getCacheFile($key);
@@ -128,9 +139,10 @@ class CacheFile implements CacheInterface
      * @param  string   $key        保存的key,操作数据的唯一标识，不可重复
      * @param  mixed    $value      缓存内容
      * @param  integer  $minutes    缓存多少分钟
+     * @param  string   $prefix     缓存前缀
      * @return boolean
      */
-    public function set($key, $value, $minutes)
+    public function set($key, $value, $minutes, $prefix)
     {
         if (rand(0, 1000000) < $this->gcProbality) {
             $this->gc();
@@ -154,11 +166,12 @@ class CacheFile implements CacheInterface
     }
 
     /**
-     * 读取换成数据
+     * 读取缓存数据
      * @param  string   $key       检索key
+     * @param  string   $prefix    缓存前缀
      * @return mixed
      */
-    public function get($key)
+    public function get($key, $prefix)
     {
         $key = strval($key);
         $cache_file = $this->getCacheFile($key);
@@ -181,9 +194,10 @@ class CacheFile implements CacheInterface
     /**
      * 从缓存中移除项目
      * @param  string  $key    检索key
+     * @param  string  $prefix 缓存前缀
      * @return boolean
      */
-    public function forget($key)
+    public function forget($key, $prefix)
     {
         $key = strval($key);
         $cache_file = $this->getCacheFile($key);
@@ -193,9 +207,10 @@ class CacheFile implements CacheInterface
 
     /**
      * 移除所有缓存
+     * @param  string $prefix 缓存前缀
      * @return boolean
      */
-    public function flush()
+    public function flush($prefix)
     {
         return $this->delFileByPath($this->path);
     }
