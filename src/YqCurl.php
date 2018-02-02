@@ -34,7 +34,7 @@ class YqCurl
                 // 使用证书
                 if ($cert_files['ssl_cert_pem']) {
                     curl_setopt($ch, CURLOPT_SSLCERTTYPE, 'PEM');
-                    curl_setopt($ch, CURLOPT_SSLCERT, $cert_files['cert_pem']);
+                    curl_setopt($ch, CURLOPT_SSLCERT, $cert_files['ssl_cert_pem']);
                 }
                 if ($cert_files['ssl_key_pem']) {
                     curl_setopt($ch, CURLOPT_SSLKEYTYPE, 'PEM');

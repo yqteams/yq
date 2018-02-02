@@ -9,6 +9,7 @@ use YQ\Caches\YqWeixinJsapiTicketCache;
 use YQ\Weixin\Oauth;
 use YQ\Weixin\Jssdk;
 use YQ\Weixin\Pay;
+use YQ\Weixin\Transfer;
 
 class YqWeixin
 {
@@ -58,14 +59,25 @@ class YqWeixin
     {
         if (!isset($this->objList[$name])) {
             switch ($name) {
+                // 网页授权
                 case 'oauth':
                     $this->objList[$name] = new Oauth($this);
                     break;
+                // 前端jssdk参数组装
                 case 'jssdk':
                     $this->objList[$name] = new Jssdk($this);
                     break;
+                // 付款
                 case 'pay':
                     $this->objList[$name] = new Pay($this);
+                    break;
+                // 企业付款到余额/银行卡
+                case 'transfer':
+                    $this->objList[$name] = new Transfer($this);
+                    break;
+                // 红包
+                case 'redpack':
+                    $this->objList[$name] = new Redpack($this);
                     break;
             }
         }

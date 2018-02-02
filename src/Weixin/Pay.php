@@ -3,6 +3,7 @@
 namespace YQ\Weixin;
 
 use YQ\Weixin\YqWeixin;
+use YQ\Weixin\PayFunc;
 use YQ\YqCurl;
 use YQ\YqExtend;
 
@@ -17,78 +18,6 @@ class Pay
     public function __construct($yqweixin)
     {
         $this->yqweixin = $yqweixin;
-    }
-
-    /**
-     * 格式化参数格式化成url参数
-     * @param  array $data 待格式化数据
-     * @return string
-     */
-    private function toUrlParams(array $data)
-    {
-        $buff = "";
-        foreach ($data as $k => $v) {
-            if ($k != "sign" && $v != "" && !is_array($v)) {
-                $buff .= $k . "=" . $v . "&";
-            }
-        }
-
-        $buff = trim($buff, "&");
-        return $buff;
-    }
-
-    /**
-     * 数据签名
-     * @param  array $data 待签名数据
-     * @return string
-     */
-    public function makeSign(array $data)
-    {
-        // 签名步骤一：按字典序排序参数
-        ksort($data);
-        $string = $this->toUrlParams($data);
-
-        // 签名步骤二：在string后加入KEY
-        $string = $string . "&key=" . $this->yqweixin->config('key');
-
-        // 签名步骤三：MD5加密
-        $string = md5($string);
-
-        // 签名步骤四：所有字符转为大写
-        $result = strtoupper($string);
-
-        return $result;
-    }
-
-    /**
-     * 将数据转为xml字符串
-     * @param  array $data 待转数据
-     * @return string
-     */
-    private function toXml(array $data)
-    {
-        $xml = "<xml>";
-        foreach ($data as $key => $val) {
-            if (is_numeric($val)) {
-                $xml .= "<" . $key . ">" . $val . "</" . $key . ">";
-            } else {
-                $xml .= "<" . $key . "><![CDATA[" . $val . "]]></" . $key . ">";
-            }
-        }
-        $xml .= "</xml>";
-        return $xml;
-    }
-
-    /**
-     * 将xml转为array
-     * @param  string $xml 待转数据
-     * @return array
-     */
-    private function fromXml(string $xml)
-    {
-        libxml_disable_entity_loader(true);
-        $data = json_decode(json_encode(simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA)), true);
-        return $data;
     }
 
     //--------------------------------------------------------------------------
@@ -129,7 +58,7 @@ class Pay
         }
 
         // 签名
-        $params['sign'] = $this->makeSign($params);
+        $params['sign'] = PayFunc::makeSign($params, $this->yqweixin->config('key'));
 
         $xml  = $this->toXml($params);
         $url  = "https://api.mch.weixin.qq.com/pay/unifiedorder";
@@ -150,7 +79,7 @@ class Pay
         }
 
         // 校验签名
-        $sign = $this->makeSign($res);
+        $sign = PayFunc::makeSign($res, $this->yqweixin->config('key'));
         if ($res['sign'] !== $sign) {
             return false;
         }
@@ -173,7 +102,7 @@ class Pay
             'return_msg'  => $msg,
         ];
         if ($code === 'SUCCESS') {
-            $params['sign'] = $this->makeSign($params);
+            $params['sign'] = PayFunc::makeSign($params, $this->yqweixin->config('key')));
         }
         $xml = $this->toXml($params);
 
@@ -201,7 +130,7 @@ class Pay
         }
 
         // 校验签名
-        $sign = $this->makeSign($res);
+        $sign = PayFunc::makeSign($res, $this->yqweixin->config('key'));
         if ($res['sign'] !== $sign) {
             $this->reNotify('FAIL', 'sign error');
             return call_user_func($callback, $res, 10002);
