@@ -2,7 +2,7 @@
 
 require_once dirname(__FILE__).'/vendor/autoload.php';
 
-use YQ\YqCurl;
+use YQ\YqExtend;
 use YQ\Elastic\DemoElastic;
 use YQ\Caches\YqWeixinJsapiTicketCache;
 
@@ -28,15 +28,22 @@ use YQ\Caches\YqWeixinJsapiTicketCache;
 
 
 
-YqWeixinJsapiTicketCache::getInstance()->update(1001, [
-    'booth_id' => 1002,
-    'create_time' => time(),
-    'name' => '连州糖水',
-    'trade_id' => 1,
-    'summary' => '好喝下火，香甜可口，过来看看瞧瞧吧111111111111111111',
-]);
+// YqWeixinJsapiTicketCache::getInstance()->update(1001, [
+//     'booth_id' => 1002,
+//     'create_time' => time(),
+//     'name' => '连州糖水',
+//     'trade_id' => 1,
+//     'summary' => '好喝下火，香甜可口，过来看看瞧瞧吧111111111111111111',
+// ]);
 
 
-$ret007 = YqWeixinJsapiTicketCache::getInstance()->get(1001);
+// $ret007 = YqWeixinJsapiTicketCache::getInstance()->get(1001);
 
-print_r($ret007);
+// print_r($ret007);
+
+
+
+// 存放文件目录
+$path = $putname = YqExtend::uniqid();
+print_r($path);
+print_r($putname);

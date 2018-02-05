@@ -14,7 +14,9 @@
     "require": {
         "php": ">=7.0.0",
         "elasticsearch/elasticsearch": "6.0.1",
-        "monolog/monolog": "1.*"
+        "monolog/monolog": "1.*",
+        "league/flysystem": "1.*",
+        "intervention/image": "2.*"
     },
     "autoload": {
         "psr-4": {
