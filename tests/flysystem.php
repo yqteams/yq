@@ -1,4 +1,7 @@
 <?php
+/**
+ * 文件处理
+ */
 
 require_once dirname(__DIR__).'/vendor/autoload.php';
 
