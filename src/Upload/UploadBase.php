@@ -140,6 +140,23 @@ class UploadBase
     }
 
     /**
+     * 获取文件扩展名
+     * @param  string $filename 文件名
+     * @return string
+     */
+    private function getExtension($filename)
+    {
+        $x = explode('.', $filename);
+
+        if (count($x) === 1)
+        {
+            return '';
+        }
+
+        return end($x);
+    }
+
+    /**
      * 上传内容检查
      * @param  array $data 由initData接口产生数据
      * @return boolean
@@ -177,13 +194,14 @@ class UploadBase
     {
         $data = [
             'origina_name' => $file['name'], // 原文件名
-            'origina_ext'  => $file['type'], // 原文件扩展名
+            'origina_type' => $file['type'], // 原文件类型
+            'origina_ext'  => $this->getExtension($file['name']), // 原文件扩展名
             'real_path'    => $file['tmp_name'], // 缓存在tmp文件夹下的文件的绝对路径
             'file_size'    => $file['size'], // 文件大小 字节计
             'is_image'     => false, // 是否为图片
         ];
 
-        if ($this->isImage($data['origina_ext'])) {
+        if ($this->isImage($data['origina_type'])) {
             $imagesizes = getimagesize($data['real_path']);
             $data['is_image'] = true;
             $data['image_width'] = $imagesizes[0]; // 图片的宽
@@ -195,12 +213,19 @@ class UploadBase
 
     private function save($data)
     {
+        $ret = [];
+
         // 存放文件目录
         $path = YqExtend::uniqid();
         if (!$this->uploadPath == '') {
             $path = $this->uploadPath."/{$path}";
         }
-        $ret[0] = $this->driverObj->save($path, 0, $data['real_path']);
+
+        $tmp               = $data;
+        $tmp['save_path']  = $path;
+        $tmp['save_name']  = '0.'.$data['origina_ext'];
+        $tmp['dirver_ret'] = $this->driverObj->save($path, $tmp['save_name'], $data['real_path']);
+        $ret[0] = $tmp;
 
         // 如果是图片，则进行裁剪
         if ($data['is_image']) {
@@ -211,7 +236,16 @@ class UploadBase
                 $img->fit($size);
                 $tmp_file = "{$real_path}_{$size}";
                 $img->save($tmp_file);
-                $ret[$size] = $this->driverObj->save($path, $size, $tmp_file);
+
+                $tmp                 = $data;
+                $tmp['image_width']  = $size;
+                $tmp['image_height'] = $size;
+                $tmp['file_size']    = filesize($tmp_file);
+                $tmp['save_path']    = $path;
+                $tmp['save_name']    = "{$size}.".$data['origina_ext'];
+                $tmp['dirver_ret']   = $this->driverObj->save($path, $tmp['save_name'], $data['real_path']);
+                $ret[$size]          = $tmp;
+
                 @unlink($tmp_file);
             }
         }
@@ -247,14 +281,16 @@ class UploadBase
         }
 
         // 初始化数据
-        $data = $this->initData($file);
+        $init_data = $this->initData($file);
 
         // 校验参数
-        $ret = $this->check($data);
+        $ret = $this->check($init_data);
         if ($ret !== true) {
             return [false, $ret];
         }
 
-        return $this->save($data);
+        $save_data = $this->save($init_data);
+
+        return [true, $save_data];
     }
 }
