@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Uploads;
+namespace YQ\Upload;
 
+use YQ\YqExtend;
 use Intervention\Image\ImageManagerStatic as Image;
 
 class UploadBase
@@ -10,7 +11,7 @@ class UploadBase
      * 文件存储驱动
      * @var string
      */
-    protected $driver = 'UploadDriverLocal';
+    protected $driver = 'YQ\\Upload\\Drivers\UploadDriverLocal';
 
     /**
      * 缓存驱动实例化对象
@@ -82,7 +83,7 @@ class UploadBase
      * 上传文件存放相对路径
      * @var string
      */
-    protected $uploadPath = '';
+    protected $uploadPath = '/tmp';
 
     /**
      * 单例模式
@@ -105,7 +106,7 @@ class UploadBase
 
     public function __construct()
     {
-        $class = 'YQ\\Uploads\\Drivers\\' . $this->driver;
+        $class = $this->driver;
         $this->driverObj = new $class($this->driverParams);
     }
 
@@ -134,7 +135,7 @@ class UploadBase
      */
     private function isImage($ext)
     {
-        $img_mimes = ['gif', 'jpeg', 'png', 'jpg', 'gpeg'];
+        $img_mimes = ['gif', 'jpeg', 'png', 'jpg', 'gpeg', 'image/gif', 'image/png', 'image/jpeg'];
         return in_array($ext, $img_mimes, TRUE);
     }
 
@@ -146,7 +147,7 @@ class UploadBase
     private function check($data)
     {
         // 校验mime类型
-        if (!$this->isAllowedFiletype($data['file_ext'])) {
+        if (!$this->isAllowedFiletype($data['origina_ext'])) {
             return 'check allowed file type error';
         }
         // 校验文件大小
@@ -178,12 +179,11 @@ class UploadBase
             'origina_name' => $file['name'], // 原文件名
             'origina_ext'  => $file['type'], // 原文件扩展名
             'real_path'    => $file['tmp_name'], // 缓存在tmp文件夹下的文件的绝对路径
-            'file_ext'     => pathinfo($file['tmp_name'], PATHINFO_EXTENSION), // 根据文件内容判断扩展名
             'file_size'    => $file['size'], // 文件大小 字节计
             'is_image'     => false, // 是否为图片
         ];
 
-        if ($this->isImage($data['file_ext'])) {
+        if ($this->isImage($data['origina_ext'])) {
             $imagesizes = getimagesize($data['real_path']);
             $data['is_image'] = true;
             $data['image_width'] = $imagesizes[0]; // 图片的宽
@@ -200,7 +200,7 @@ class UploadBase
         if (!$this->uploadPath == '') {
             $path = $this->uploadPath."/{$path}";
         }
-        $this->driverObj->save($path, 0, $data['tmp_name']);
+        $ret[0] = $this->driverObj->save($path, 0, $data['real_path']);
 
         // 如果是图片，则进行裁剪
         if ($data['is_image']) {
@@ -211,14 +211,16 @@ class UploadBase
                 $img->fit($size);
                 $tmp_file = "{$real_path}_{$size}";
                 $img->save($tmp_file);
-                $this->driverObj->save($path, $size, $tmp_file);
+                $ret[$size] = $this->driverObj->save($path, $size, $tmp_file);
                 @unlink($tmp_file);
             }
         }
+
+        return $ret;
     }
 
     /**
-     * 上传处理
+     * 外部接口 上传处理
      * @param  string $field 上传文件名
      * @return string
      */
@@ -235,8 +237,8 @@ class UploadBase
         $file = $_FILES[$field];
 
         // 判断是否有错误
-        if ($fiel['error'] !== 0) {
-            return [false, 'upload error:'.$fiel['error']];
+        if ($file['error'] !== 0) {
+            return [false, 'upload error:'.$file['error']];
         }
 
         // 判断指定的文件是否是通过 HTTP POST 上传的

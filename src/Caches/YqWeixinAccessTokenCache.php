@@ -11,7 +11,7 @@ class YqWeixinAccessTokenCache extends CacheBase
      * 缓存驱动
      * @var string
      */
-    protected $driver = 'CacheDriverFile';
+    protected $driver = 'YQ\\Caches\\Drivers\\CacheDriverFile';
 
     /**
      * 缓存前缀

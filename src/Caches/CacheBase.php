@@ -20,7 +20,7 @@ class CacheBase
      * 使用缓存驱动
      * @var string
      */
-    protected $driver = 'CacheDriverFile';
+    protected $driver = 'YQ\\Caches\\Drivers\\CacheDriverFile';
 
     /**
      * 缓存驱动配置
@@ -55,7 +55,7 @@ class CacheBase
 
     public function __construct()
     {
-        $class = 'YQ\\Caches\\Drivers\\' . $this->driver;
+        $class = $this->driver;
         $this->driverObj = new $class($this->driverParams);
     }
 
