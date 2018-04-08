@@ -48,7 +48,6 @@ class YqExtend
     public static function getRandom($len=16)
     {
         $allstr = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
-        $len = 16;
         $str = '';
         $max = strlen($allstr)-1;
         for($i=0;$i<=$len;++$i){

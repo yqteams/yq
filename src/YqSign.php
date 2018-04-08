@@ -8,7 +8,7 @@ class YqSign
      * 对数据进行签名 sign和空字符不参与签名
      * 签名步骤：
      * 1、对待签名的数组按照键名进行升序排序
-     * 2、组装待签名字符串 key=value&key2=value2...&appkey=xxx
+     * 2、组装待签名字符串 key=value&key2=value2...&appkey=xxx ，如果值为空不参与签名
      * 3、将组装好的待签名字符串全部转换为小写
      * 4、对字符串进行md5
      * @param  array $params  待签名数据
@@ -38,8 +38,10 @@ class YqSign
     public static function checkSign($sign, $param)
     {
         $check_sign = self::getSign($param);
-        if ($sign == $check_sign) {
-            return true;
+        if ($sign !== $check_sign) {
+            return false;
         }
+
+        return true;
     }
 }
