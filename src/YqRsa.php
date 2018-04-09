@@ -26,7 +26,7 @@ class YqRsa
      * 获取私钥
      * @return bool|resource
      */
-    private static function getPrivateKey()
+    private function getPrivateKey()
     {
         $key = $this->privateKey;
         return openssl_pkey_get_private($key);
@@ -36,7 +36,7 @@ class YqRsa
      * 获取公钥
      * @return bool|resource
      */
-    private static function getPublicKey()
+    private function getPublicKey()
     {
         $key = $this->privateKey;
         return openssl_pkey_get_public($key);
