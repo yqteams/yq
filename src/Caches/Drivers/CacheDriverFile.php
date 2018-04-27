@@ -126,7 +126,6 @@ class CacheDriverFile implements CacheDriverInterface
     {
         $key = strval($key);
         $cache_file = $this->getCacheFile($key);
-        dd(filemtime($cache_file));
         if (@filemtime($cache_file) < time()) {
             return false;
         }
