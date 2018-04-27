@@ -55,12 +55,15 @@ class Pay
             case 'NATIVE':
                 $params['spbill_create_ip'] = YqExtend::getServerIp(); //服务端ip
                 break;
+            case 'MWEB':
+                $params['spbill_create_ip'] = YqExtend::getIP(); //客户端ip
+                break;
         }
 
         // 签名
         $params['sign'] = PayFunc::makeSign($params, $this->yqweixin->config('key'));
 
-        $xml  = $this->toXml($params);
+        $xml  = PayFunc::toXml($params);
         $url  = "https://api.mch.weixin.qq.com/pay/unifiedorder";
         $cert = [
             'ssl_cert_pem' => $this->yqweixin->config('ssl_cert_pem'),
@@ -71,7 +74,7 @@ class Pay
             return false;
         }
 
-        $res = $this->fromXml($res);
+        $res = PayFunc::fromXml($res);
 
         // 校验是否成功
         if ($res['return_code'] !== 'SUCCESS') {
@@ -102,9 +105,9 @@ class Pay
             'return_msg'  => $msg,
         ];
         if ($code === 'SUCCESS') {
-            $params['sign'] = PayFunc::makeSign($params, $this->yqweixin->config('key')));
+            $params['sign'] = PayFunc::makeSign($params, $this->yqweixin->config('key'));
         }
-        $xml = $this->toXml($params);
+        $xml = PayFunc::toXml($params);
 
         echo $xml;
     }
@@ -122,7 +125,7 @@ class Pay
         // 获取通知的数据
         $xml = file_get_contents('php://input');
 
-        $res = $this->fromXml($xml);
+        $res = PayFunc::fromXml($xml);
         if ($res['return_code'] != 'SUCCESS') {
             $this->reNotify('FAIL', 'return code not success');
 
