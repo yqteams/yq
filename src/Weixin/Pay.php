@@ -37,9 +37,9 @@ class Pay
             'nonce_str'    => YqExtend::uniqid32(), //随机字符串
             'body'         => $inputs['body'], //商品描述
             'out_trade_no' => $inputs['out_trade_no'], //我方订单
-            'total_fee'    => $inputs['total_fee'], //价格 元
+            'total_fee'    => $inputs['total_fee'], //价格 分
             'notify_url'   => $inputs['notify_url'], //充值成功回调地址
-            'trade_type'   => $inputs['trade_type'], //交易类型 JSAPI，NATIVE，APP
+            'trade_type'   => $inputs['trade_type'], //交易类型 JSAPI，NATIVE，APP，MWEB
             'attach'       => $inputs['attach'], //附加数据，在查询API和支付通知中原样返回，可作为自定义参数使用。
         ];
 
