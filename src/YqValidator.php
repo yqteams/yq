@@ -30,7 +30,7 @@ class YqValidator
             return false;
         }
 
-        return false;
+        return true;
     }
 
     /**
