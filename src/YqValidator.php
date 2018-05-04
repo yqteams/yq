@@ -30,7 +30,7 @@ class YqValidator
             return false;
         }
 
-        return false;
+        return true;
     }
 
     /**
@@ -84,13 +84,8 @@ class YqValidator
      * @param int $maxlen 账号最大长度
      * @return bool
      */
-    public static function username($val, $minlen = 6, $maxlen = 16)
+    public static function username($val, $minlen = 6, $maxlen = 14)
     {
-        //不能以数字开头
-        if (is_numeric($val[0])) {
-            return false;
-        }
-
         //长度限制
         $len = strlen($val);
         if ($len > $maxlen || $len < $minlen) {
@@ -98,7 +93,7 @@ class YqValidator
         }
 
         //只允许 字母数字下划线.并且首字符不能是数字
-        if (!preg_match("/^[a-zA-Z_][a-zA-Z0-9_]+$/", $val)) {
+        if (!preg_match("/^[a-zA-Z0-9_]+$/", $val)) {
             return false;
         }
         return true;
