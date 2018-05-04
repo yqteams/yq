@@ -129,12 +129,11 @@ class CacheBase
     public function remember($key='')
     {
         $unid = $this->getUnid($key);
-        $minutes = $this->minutes;
         $value = $this->driverObj->get($unid, $this->prefix);
         if (!$value) {
             $value = call_user_func(array($this, 'getReal'), $key);
             if (!$value) return;
-            $this->update($key, $value, $minutes);
+            $this->update($key, $value);
         }
 
         return $value;
