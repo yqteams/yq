@@ -170,6 +170,22 @@ class YqExtend
     }
 
     /**
+     * 获取IP对应的详细地址信息
+     * 'country' => $tmp[0], // 国家
+     * 'region' => $tmp[1], // 区域
+     * 'province' => $tmp[2], // 省份
+     * 'city' => $tmp[3], // 市
+     * 'isp' => $tmp[4], // 运营商
+     * @param $ip
+     * @return array
+     */
+    public static function getIpInfo($ip)
+    {
+        $ipquery = new Ipquery();
+        return $ipquery->search_offline($ip);
+    }
+
+    /**
      * 获取服务端ip
      * @return string
      */
