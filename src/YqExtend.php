@@ -2,6 +2,8 @@
 
 namespace YQ;
 
+use YQ\Ipquery\Ipquery;
+
 class YqExtend
 {
     /**
@@ -181,8 +183,7 @@ class YqExtend
      */
     public static function getIpInfo($ip)
     {
-        $ipquery = new Ipquery();
-        return $ipquery->search_offline($ip);
+        return Ipquery::getInstance()->search_offline($ip);
     }
 
     /**

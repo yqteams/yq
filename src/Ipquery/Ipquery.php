@@ -7,6 +7,24 @@ namespace YQ\Ipquery;
 
 class Ipquery
 {
+    /**
+     * 单例模式
+     * @var obj
+     */
+    private static $_instance = [];
+
+    /**
+     * 获取单例实例化对象
+     * @return obj
+     */
+    public static function getInstance()
+    {
+        if (!isset(self::$_instance)) {
+            self::$_instance = new Ipquery();
+        }
+        return self::$_instance;
+    }
+
     private $method;
 
     private $ip2regionObj;
