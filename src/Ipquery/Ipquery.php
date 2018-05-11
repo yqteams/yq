@@ -11,7 +11,7 @@ class Ipquery
      * 单例模式
      * @var obj
      */
-    private static $_instance = [];
+    private static $_instance = null;
 
     /**
      * 获取单例实例化对象
@@ -19,11 +19,12 @@ class Ipquery
      */
     public static function getInstance()
     {
-        if (!isset(self::$_instance)) {
+        if (self::$_instance == null) {
             self::$_instance = new Ipquery();
         }
         return self::$_instance;
     }
+
 
     private $method;
 
