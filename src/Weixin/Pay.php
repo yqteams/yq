@@ -57,6 +57,7 @@ class Pay
                 break;
             case 'MWEB':
                 $params['spbill_create_ip'] = YqExtend::getIP(); //客户端ip
+                $params['scene_info']       = $inputs['scene_info'];
                 break;
         }
 
