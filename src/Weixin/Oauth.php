@@ -24,11 +24,11 @@ class Oauth
      * @param  string $callback_url 授权成功回调地址
      * @return string
      */
-    public function loginUrl(string $callback_url)
+    public function loginUrl(string $callback_url,$scope = 'snsapi_userinfo')
     {
         $redirect_uri = urlencode($callback_url);
         $appid = $this->yqweixin->config('appid');
-        $other = "response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
+        $other = "response_type=code&scope={$scope}&state=STATE#wechat_redirect";
 
         $url = "https://open.weixin.qq.com/connect/oauth2/authorize";
         $url .= "?appid={$appid}&redirect_uri={$redirect_uri}&{$other}";
