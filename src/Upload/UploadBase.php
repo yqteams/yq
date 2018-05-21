@@ -211,7 +211,7 @@ class UploadBase
         return $data;
     }
 
-    private function save($data)
+    protected function save($data)
     {
         $ret = [];
 
@@ -229,7 +229,9 @@ class UploadBase
 
         // 如果是图片，则进行裁剪
         if ($data['is_image']) {
-            if (empty($this->trimSizes)) return;
+            if (empty($this->trimSizes)) {
+                return $ret;
+            }
             $real_path = $data['real_path'];
             foreach ($this->trimSizes as $size) {
                 $img = Image::make($real_path);
