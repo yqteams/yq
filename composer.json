@@ -17,7 +17,8 @@
         "monolog/monolog": "1.*",
         "league/flysystem": "1.*",
         "intervention/image": "2.*",
-        "phpoffice/phpexcel": "1.*"
+        "phpoffice/phpexcel": "1.*",
+        "swiftmailer/swiftmailer": "*"
     },
     "autoload": {
         "psr-4": {

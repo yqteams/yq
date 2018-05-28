@@ -245,7 +245,7 @@ class UploadBase
                 $tmp['file_size']    = filesize($tmp_file);
                 $tmp['save_path']    = $path;
                 $tmp['save_name']    = "{$size}.".$data['origina_ext'];
-                $tmp['dirver_ret']   = $this->driverObj->save($path, $tmp['save_name'], $data['real_path']);
+                $tmp['dirver_ret']   = $this->driverObj->save($path, $tmp['save_name'], $tmp_file);
                 $ret[$size]          = $tmp;
 
                 @unlink($tmp_file);

@@ -5,6 +5,7 @@ require_once dirname(__FILE__).'/vendor/autoload.php';
 use YQ\YqExtend;
 use YQ\Elastic\DemoElastic;
 use YQ\Caches\YqWeixinJsapiTicketCache;
+use YQ\YqEmail;
 
 // $client = DemoElastic::getInstance();
 
@@ -50,7 +51,11 @@ use YQ\Caches\YqWeixinJsapiTicketCache;
 
 
 
-$params = "%7B%22userid%22%3A1118277%2C%22body%22%3A%221980%5Cu91d1%5Cu5e01%22%2C%22fee%22%3A%22198%22%2C%22subject%22%3A%221980%5Cu91d1%5Cu5e01%22%2C%22appId%22%3A%22649%22%2C%22trade_sn%22%3A%22i2018020918465010824%22%2C%22orderId%22%3A%22dba05bedb0157554b4fd222f5e5bc96f%22%2C%22status%22%3A%22succ%22%2C%22createTime%22%3A%222018-02-09_18%3A46%3A50%22%2C%22sign%22%3A%22c41d996f26e4f6c98537abcad993962c%22%7D=";
-print_r(urldecode($params));
-$params = json_decode(urldecode($params), true);
-print_r($params);
+// $params = "%7B%22userid%22%3A1118277%2C%22body%22%3A%221980%5Cu91d1%5Cu5e01%22%2C%22fee%22%3A%22198%22%2C%22subject%22%3A%221980%5Cu91d1%5Cu5e01%22%2C%22appId%22%3A%22649%22%2C%22trade_sn%22%3A%22i2018020918465010824%22%2C%22orderId%22%3A%22dba05bedb0157554b4fd222f5e5bc96f%22%2C%22status%22%3A%22succ%22%2C%22createTime%22%3A%222018-02-09_18%3A46%3A50%22%2C%22sign%22%3A%22c41d996f26e4f6c98537abcad993962c%22%7D=";
+// print_r(urldecode($params));
+// $params = json_decode(urldecode($params), true);
+// print_r($params);
+
+
+// YqEmail::test();
+YqEmail::test2();
