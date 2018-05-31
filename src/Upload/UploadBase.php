@@ -121,7 +121,7 @@ class UploadBase
             return true;
         }
 
-        if (strpos($this->allowedTypes, $ext) !== false) {
+        if (strpos($this->allowedTypes, strtolower($ext)) !== false) {
             return true;
         }
 
@@ -136,7 +136,7 @@ class UploadBase
     private function isImage($ext)
     {
         $img_mimes = ['gif', 'jpeg', 'png', 'jpg', 'gpeg', 'image/gif', 'image/png', 'image/jpeg'];
-        return in_array($ext, $img_mimes, TRUE);
+        return in_array(strtolower($ext), $img_mimes, TRUE);
     }
 
     /**
