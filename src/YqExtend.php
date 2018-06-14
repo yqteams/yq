@@ -222,7 +222,7 @@ class YqExtend
     }
 
     /**
-     * 返回身份证相关信息 ['idcard'=>'身份证','birthday'=>'1991-04-27','age'=>'27','gender'=>'男','region'=>'广东省 广州市 天河区']
+     * 返回身份证相关信息 ['idcard'=>'身份证','birthday'=>'1990-05-27','age'=>'27','gender'=>'男','region'=>'广东省 广州市 天河区']
      * @param string $idcard
      * @return array|bool 返回false，标识身份证验证不通过,通过返回数组
      */
@@ -241,6 +241,4 @@ class YqExtend
             'region'   => $idcard_class->getRegion(),
         ];
     }
-
-
 }
