@@ -2,6 +2,7 @@
 
 namespace YQ;
 
+use YQ\Idcard\Idcard;
 use YQ\Ipquery\Ipquery;
 
 class YqExtend
@@ -13,9 +14,9 @@ class YqExtend
      */
     public static function convertUnderline($str)
     {
-        $str = preg_replace_callback('/([-_]+([a-z]{1}))/i',function($matches){
+        $str = preg_replace_callback('/([-_]+([a-z]{1}))/i', function ($matches) {
             return strtoupper($matches[2]);
-        },$str);
+        }, $str);
         return $str;
     }
 
@@ -26,9 +27,9 @@ class YqExtend
      */
     public static function humpToLine($str)
     {
-        $str = preg_replace_callback('/([A-Z]{1})/',function($matches){
-            return '_'.strtolower($matches[0]);
-        },$str);
+        $str = preg_replace_callback('/([A-Z]{1})/', function ($matches) {
+            return '_' . strtolower($matches[0]);
+        }, $str);
         return $str;
     }
 
@@ -39,7 +40,7 @@ class YqExtend
      */
     public static function md516($str)
     {
-        return substr(md5($str),8,16);
+        return substr(md5($str), 8, 16);
     }
 
     /**
@@ -47,13 +48,13 @@ class YqExtend
      * @param  integer $len 拼接长度
      * @return string
      */
-    public static function getRandom($len=16)
+    public static function getRandom($len = 16)
     {
         $allstr = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
-        $str = '';
-        $max = strlen($allstr)-1;
-        for($i=0;$i<=$len;++$i){
-            $str .= $allstr[mt_rand(0,$max)];
+        $str    = '';
+        $max    = strlen($allstr) - 1;
+        for ($i = 0; $i <= $len; ++$i) {
+            $str .= $allstr[mt_rand(0, $max)];
         }
         return $str;
     }
@@ -63,13 +64,13 @@ class YqExtend
      * @param  integer $len 拼接长度
      * @return string
      */
-    public static function getRandomLetter($len=16)
+    public static function getRandomLetter($len = 16)
     {
         $allstr = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
-        $str = '';
-        $max = strlen($allstr)-1;
-        for($i=0;$i<$len;++$i){
-            $str .= $allstr[mt_rand(0,$max)];
+        $str    = '';
+        $max    = strlen($allstr) - 1;
+        for ($i = 0; $i < $len; ++$i) {
+            $str .= $allstr[mt_rand(0, $max)];
         }
         return $str;
     }
@@ -79,13 +80,13 @@ class YqExtend
      * @param  integer $len 拼接长度
      * @return string
      */
-    public static function getRandomInt($len=16)
+    public static function getRandomInt($len = 16)
     {
         $allstr = "0123456789";
-        $str = '';
-        $max = strlen($allstr)-1;
-        for($i=0;$i<$len;++$i){
-            $str .= $allstr[mt_rand(0,$max)];
+        $str    = '';
+        $max    = strlen($allstr) - 1;
+        for ($i = 0; $i < $len; ++$i) {
+            $str .= $allstr[mt_rand(0, $max)];
         }
         return $str;
     }
@@ -106,13 +107,13 @@ class YqExtend
      * @param  integer $flag 标识
      * @return string
      */
-    public static function uniqid($flag=1000)
+    public static function uniqid($flag = 1000)
     {
-        $num = floatval(microtime()) * 1000000;
-        $id = $flag . date('YmdHis') . str_pad($num, 6, "0", STR_PAD_LEFT);
+        $num  = floatval(microtime()) * 1000000;
+        $id   = $flag . date('YmdHis') . str_pad($num, 6, "0", STR_PAD_LEFT);
         $diff = 32;
-        if (strlen($id)<$diff) {
-            $id .= self::getRandomInt($diff-strlen($id));
+        if (strlen($id) < $diff) {
+            $id .= self::getRandomInt($diff - strlen($id));
         }
         return $id;
     }
@@ -133,8 +134,8 @@ class YqExtend
     public static function buildOrderNo()
     {
         return (date('y') + date('m') + date('d')) .
-                str_pad((time() - strtotime(date('Y-m-d'))), 5, 0, STR_PAD_LEFT) .
-                substr(microtime(), 2, 6) . sprintf('%03d', rand(0, 999));
+            str_pad((time() - strtotime(date('Y-m-d'))), 5, 0, STR_PAD_LEFT) .
+            substr(microtime(), 2, 6) . sprintf('%03d', rand(0, 999));
     }
 
     /**
@@ -164,8 +165,9 @@ class YqExtend
         if (strpos($thisip, "10.0.0.") !== false ||
             strpos($thisip, "192.168.") !== false ||
             strpos($thisip, "127.0.0.") !== false ||
-            strpos($thisip, "172.16.0.") !== false) {
-                $thisip = $_SERVER["REMOTE_ADDR"];
+            strpos($thisip, "172.16.0.") !== false
+        ) {
+            $thisip = $_SERVER["REMOTE_ADDR"];
         }
 
         return $thisip;
@@ -194,7 +196,7 @@ class YqExtend
     {
         if (!empty($_SERVER['SERVER_ADDR'])) {
             $ip = $_SERVER['SERVER_ADDR'];
-        } elseif (!empty($_SERVER['SERVER_NAME'])) {
+        } else if (!empty($_SERVER['SERVER_NAME'])) {
             $ip = gethostbyname($_SERVER['SERVER_NAME']);
         } else {
             // for php-cli(phpunit etc.)
@@ -216,6 +218,29 @@ class YqExtend
             $protocol = 'https://';
         }
 
-        return $protocol.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+        return $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
     }
+
+    /**
+     * 返回身份证相关信息 ['idcard'=>'身份证','birthday'=>'1991-04-27','age'=>'27','gender'=>'男','region'=>'广东省 广州市 天河区']
+     * @param string $idcard
+     * @return array|bool 返回false，标识身份证验证不通过,通过返回数组
+     */
+    public static function getIdCardInfo($idcard)
+    {
+        $idcard_class = Idcard::getInstance($idcard);
+        if (!$idcard_class->check()) {
+            return false;//检查不通过
+        }
+
+        return [
+            'idcard'   => $idcard,
+            'birthday' => $idcard_class->getBirthday(),
+            'age'      => $idcard_class->getAge(),
+            'gender'   => $idcard_class->getGender(),
+            'region'   => $idcard_class->getRegion(),
+        ];
+    }
+
+
 }
