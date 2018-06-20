@@ -190,8 +190,8 @@ class Idcard
         $district   = substr($this->id, 0, 6);
         $region_arr = [
             self::$region_list[$province],
-            self::$region_list[$city],
-            self::$region_list[$district],
+            isset(self::$region_list[$city]) ? self::$region_list[$city] : '',
+            isset(self::$region_list[$district]) ? self::$region_list[$district] : '',
         ];
         return implode($seperate, $region_arr);
     }
@@ -236,7 +236,8 @@ class Idcard
      */
     private function checkArea()
     {
-        $area_code = substr($this->id, 0, 6);
+        $area_code = substr($this->id, 0, 2);
+        $area_code .= '0000';
         return isset(self::$region_list[$area_code]);
     }
 
