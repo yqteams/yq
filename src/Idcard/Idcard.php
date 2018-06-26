@@ -2,6 +2,8 @@
 
 namespace YQ\Idcard;
 
+// 获取代码出处: https://github.com/ionepub/idcard
+
 class Idcard
 {
     /**
