@@ -1,8 +1,6 @@
 <?php
 
-namespace YQ\Facebook;
-
-use YQ\Facebook\User;
+namespace YQ;
 
 /**
  * facebook 接口父类
@@ -36,7 +34,7 @@ class YqFacebook
         $this->fbobj = new \Facebook\Facebook([
             'app_id'                => $config['appid'],
             'app_secret'            => $config['appsecret'],
-            'default_graph_version' => isset($config['graph_version'])?$config['graph_version']:'v3.0',
+            'default_graph_version' => isset($config['graph_version']) ? $config['graph_version'] : 'v3.0',
         ]);
     }
 
@@ -67,5 +65,29 @@ class YqFacebook
         }
 
         return $array;
+    }
+
+    /**
+     * 根据用户登录成功获取到的token，前往fb校验
+     * https://developers.facebook.com/docs/graph-api/reference/v3.0/debug_token
+     * @param  string $user_token 前端登录成功获取到的token
+     * @return array
+     */
+    public function debugToken($user_token)
+    {
+        $appid        = $this->config('appid');
+        $appsecret    = $this->config('appsecret');
+        $access_token = "{$appid}%7C{$appsecret}";
+        try {
+            $response = $this->fbobj->get(
+                "/debug_token?input_token={$user_token}",
+                "{$access_token}"
+            );
+            return [true, $response];
+        } catch (Facebook\Exceptions\FacebookResponseException $e) {
+            return [false, 'Graph returned an error: ' . $e->getMessage()];
+        } catch (Facebook\Exceptions\FacebookSDKException $e) {
+            return [false, 'Facebook SDK returned an error: ' . $e->getMessage()];
+        }
     }
 }
