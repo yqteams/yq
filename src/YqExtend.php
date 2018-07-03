@@ -159,7 +159,7 @@ class YqExtend
             if (isset($_SERVER["HTTP_CLIENT_IP"])) {
                 $thisip = $_SERVER["HTTP_CLIENT_IP"];
             } else {
-                $thisip = $_SERVER["REMOTE_ADDR"];
+                $thisip = isset($_SERVER["REMOTE_ADDR"])?$_SERVER["REMOTE_ADDR"]:'localhost';
             }
         }
         if (strpos($thisip, "10.0.0.") !== false ||

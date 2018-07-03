@@ -18,7 +18,9 @@
         "league/flysystem": "1.*",
         "intervention/image": "2.*",
         "phpoffice/phpexcel": "1.*",
-        "swiftmailer/swiftmailer": "*"
+        "swiftmailer/swiftmailer": "*",
+        "facebook/graph-sdk": "5.*",
+        "google/apiclient": "v2.*"
     },
     "autoload": {
         "psr-4": {
