@@ -247,26 +247,23 @@ class UploadBase
             foreach ($this->trimSizes as $kkk => $size) {
                 $img = Image::make($real_path);
                 //正方形
-                if($this->trimType == 1){
+                if ($this->trimType == 1) {
                     $img->fit($size, $size, function ($constraint) {
                         $constraint->upsize();
                     });
-                }
-                else if($this->trimType == 2){
+                } else if ($this->trimType == 2) {
                     //根据宽度切割,高度自适应
                     $img->resize($size, null, function ($constraint) {
                         $constraint->aspectRatio();
                         $constraint->upsize();
                     });
-                }
-                else if($this->trimType == 3){
+                } else if ($this->trimType == 3) {
                     //根据高度切割,宽度自适应
                     $img->resize(null, $size, function ($constraint) {
                         $constraint->aspectRatio();
                         $constraint->upsize();
                     });
-                }
-                else if($this->trimType == 3){
+                } else if ($this->trimType == 3) {
                     //固定宽高
                     $img->resize($size, $this->trimSizesHeight[$kkk], function ($constraint) {
                         $constraint->upsize();
@@ -283,8 +280,7 @@ class UploadBase
                 $tmp['save_path']    = $path;
                 $tmp['save_name']    = "{$size}." . $data['origina_ext'];
                 $tmp['dirver_ret']   = $this->driverObj->save($path, $tmp['save_name'], $tmp_file);
-                yqlog($tmp);
-                $ret[$size]          = $tmp;
+                $ret[$size] = $tmp;
 
                 @unlink($tmp_file);
             }
