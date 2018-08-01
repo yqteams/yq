@@ -87,6 +87,10 @@ class YqWeixin
                 case 'user':
                     $this->objList[$name] = new User($this);
                     break;
+                // 推送信息组装
+                case 'pull':
+                    $this->objList[$name] = new Pull($this);
+                    break;
             }
         }
 
