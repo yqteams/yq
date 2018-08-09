@@ -47,7 +47,7 @@ class YqWeixin
     public function __construct(array $config)
     {
         $this->configList = $config;
-        $this->objList = [];
+        $this->objList    = [];
     }
 
     /**
@@ -79,6 +79,18 @@ class YqWeixin
                 case 'redpack':
                     $this->objList[$name] = new Redpack($this);
                     break;
+                // 菜单
+                case 'menu':
+                    $this->objList[$name] = new Menu($this);
+                    break;
+                // 用户信息
+                case 'user':
+                    $this->objList[$name] = new User($this);
+                    break;
+                // 推送信息组装
+                case 'pull':
+                    $this->objList[$name] = new Pull($this);
+                    break;
             }
         }
 
@@ -89,11 +101,11 @@ class YqWeixin
 
     /**
      * 读取配置信息
-     * @param  string $key 配置key，如果需求获取二维数组里的值，可以使用 key1.key2
+     * @param  string $key     配置key，如果需求获取二维数组里的值，可以使用 key1.key2
      * @param  mixed  $default 如果找不到数据则返回默认值
      * @return mixed
      */
-    public function config(string $key, $default=null)
+    public function config(string $key, $default = null)
     {
         $array = $this->configList;
 
@@ -122,16 +134,16 @@ class YqWeixin
      */
     private function updateAccessToken()
     {
-        $appid = $this->config('appid');
+        $appid     = $this->config('appid');
         $appsecret = $this->config('secret');
-        $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={$appid}&secret={$appsecret}";
-        $res = YqCurl::curl($url, false, 0, 1);
+        $url       = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={$appid}&secret={$appsecret}";
+        $res       = YqCurl::curl($url, false, 0, 1);
         if (!$res) return false;
         $msg = json_decode($res, true);
 
         YqWeixinAccessTokenCache::getInstance()->update($appid, [
-            'access_token' => $msg['access_token'],
-            'access_token_timeout' => ($msg['expires_in']+time()-300)
+            'access_token'         => $msg['access_token'],
+            'access_token_timeout' => ($msg['expires_in'] + time() - 300),
         ]);
 
         return $msg['access_token'];
@@ -144,9 +156,9 @@ class YqWeixin
     public function getAccessToken()
     {
         $appid = $this->config('appid');
-        $data = YqWeixinAccessTokenCache::getInstance()->get($appid);
+        $data  = YqWeixinAccessTokenCache::getInstance()->get($appid);
 
-        if ($data === null || $data['access_token_timeout']<time()) {
+        if ($data === null || $data['access_token_timeout'] < time()) {
             return $this->updateAccessToken();
         } else {
             return $data['access_token'];
@@ -159,16 +171,16 @@ class YqWeixin
      */
     private function updateJsapiTicket()
     {
-        $appid = $this->config('appid');
+        $appid        = $this->config('appid');
         $access_token = $this->getAccessToken();
-        $url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={$access_token}&type=jsapi";
-        $res = YqCurl::curl($url, false, 0, 1);
+        $url          = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={$access_token}&type=jsapi";
+        $res          = YqCurl::curl($url, false, 0, 1);
         if (!$res) return false;
         $msg = json_decode($res, true);
 
         YqWeixinJsapiTicketCache::getInstance()->update($appid, [
-            'jsapi_ticket' => $msg['ticket'],
-            'jsapi_ticket_timeout' => ($msg['expires_in']+time()-300)
+            'jsapi_ticket'         => $msg['ticket'],
+            'jsapi_ticket_timeout' => ($msg['expires_in'] + time() - 300),
         ]);
 
         return $msg['ticket'];
@@ -181,12 +193,53 @@ class YqWeixin
     public function getJsapiTicket()
     {
         $appid = $this->config('appid');
-        $data = YqWeixinJsapiTicketCache::getInstance()->get($appid);
+        $data  = YqWeixinJsapiTicketCache::getInstance()->get($appid);
 
-        if ($data === null || $data['jsapi_ticket_timeout']<time()) {
+        if ($data === null || $data['jsapi_ticket_timeout'] < time()) {
             return $this->updateJsapiTicket();
         } else {
             return $data['jsapi_ticket'];
         }
+    }
+
+    /**
+     * 输出xml字符
+     * @param $params
+     * @return bool|string
+     */
+    public function toXml($params)
+    {
+        if (empty($params)) {
+            return false;
+        }
+
+        $xml = '<xml>';
+        foreach ($params as $key => $val) {
+            if (is_numeric($val)) {
+                $xml .= "<{$key}>{$val}</{$key}>";
+            } else {
+                $xml .= "<{$key}><![CDATA[{$val}]]></{$key}>";
+            }
+        }
+        $xml .= '</xml>';
+
+        return $xml;
+    }
+
+    /**
+     * 将xml转为array
+     * @param $xml
+     * @return array|bool|mixed
+     */
+    public function fromXml($xml)
+    {
+        if (!$xml) {
+            return false;
+        }
+        //将XML转为array
+        //禁止引用外部xml实体
+        libxml_disable_entity_loader(true);
+
+        return json_decode(json_encode(simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA)), true);
     }
 }
