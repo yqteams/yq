@@ -12,9 +12,10 @@ class YqCurl
      * @param  integer $https       请求协议
      * @param  integer $timeout     等待超时 默认30s
      * @param  integer $x_www_form  x-www-form-urlencoded提交方式
+     * @param  array   $headers     自定义头部
      * @return bool|mixed      返回请求结果
      */
-    public static function curl($url, $params = false, $ispost = 0, $https = 0, $timeout = 30, $x_www_form = false)
+    public static function curl($url, $params = false, $ispost = 0, $https = 0, $timeout = 30, $x_www_form = false, $headers = [])
     {
         $httpInfo = array();
         $ch       = curl_init();
@@ -50,6 +51,10 @@ class YqCurl
             } else {
                 curl_setopt($ch, CURLOPT_URL, $url);
             }
+        }
+
+        if (!empty($headers)) {
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         }
 
         $response = curl_exec($ch);
