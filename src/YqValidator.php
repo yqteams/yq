@@ -121,4 +121,16 @@ class YqValidator
         return true;
     }
 
+    /**
+     * 判断特殊字符
+     * @param $val
+     * @return bool
+     */
+    public static function specialChar($val)
+    {
+        if (preg_match("/[\'.,:;*?~`!@#$%^&+=)(<>{}]|\]|\[|\/|\\\|\"|\|/", $val)) { //不允许特殊字符
+            return false;
+        }
+        return true;
+    }
 }

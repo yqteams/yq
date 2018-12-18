@@ -86,13 +86,13 @@ class YqExcel
             $sheet->setTitle(strval($sheetname));
         }
 
-        $readertype = strstr($filename, ".xlsx")?'Excel2007':'Excel5';
-        $writer = PHPExcel_IOFactory::createWriter($excel, $readertype);
-        iconv('UTF-8', 'GB2312', $name);
+        $readertype = strstr($filename, ".xlsx") ? 'Excel2007' : 'Excel5';
+        $writer     = \PHPExcel_IOFactory::createWriter($excel, $readertype);
+        iconv('UTF-8', 'GB2312', $filename);
 
         //设置头信息
         header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment;filename="'.$name.'"');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
         header('Cache-Control: max-age=0');
         $writer->save('php://output');
     }
