@@ -26,13 +26,19 @@ class YqGoogle
      */
     protected $objList;
 
+    /**
+     * 初始化所需参数
+     * client_id        web客户端id
+     * client_secret    web客户端 secret
+     * redirect_uri     授权成功回调链接
+     * state            自定义授权回调识别码
+     * 完整授权说明链接：https://developers.google.com/android-publisher/authorization
+     */
     public function __construct(array $config)
     {
         $this->configList = $config;
 
-        $this->google = new \Google_Client([
-            'client_id' => $config['client_id'],
-        ]);
+        $this->google = new \Google_Client($config);
     }
 
     /**
@@ -78,5 +84,44 @@ class YqGoogle
         } else {
             return [false, 'Invalid ID token'];
         }
+    }
+
+    /**
+     * 获取授权 OAuth 2.0 链接
+     * https://developers.google.com/android-publisher/authorization
+     * @return string
+     */
+    public function createAuthUrl()
+    {
+        $scope = 'https://www.googleapis.com/auth/androidpublisher';
+        return $this->google->createAuthUrl($scope);
+    }
+
+    /**
+     * 根据授权返回的 code 获取api token
+     * https://developers.google.com/android-publisher/authorization
+     * @param  string $state    识别码
+     * @param  string $code     授权返回值，用于获取token
+     * @return string
+     */
+    public function fetchAccessTokenWithAuthCode($state, $code)
+    {
+        if ($this->configList['state'] != $state) {
+            return [false, 'state error'];
+        }
+        $ret = $this->google->fetchAccessTokenWithAuthCode($code);
+        return [true, $ret];
+    }
+
+    /**
+     * 刷新token
+     * https://developers.google.com/android-publisher/authorization
+     * @param  string $token 旧token值
+     * @return array
+     */
+    public function fetchAccessTokenWithRefreshToken($token)
+    {
+        $ret = $this->google->fetchAccessTokenWithRefreshToken($token);
+        return [true, $ret];
     }
 }
