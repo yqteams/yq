@@ -27,6 +27,14 @@ class CCUv3
         $this->client->setAuth($client_token, $client_secret, $access_token);
     }
 
+    private function returnResponse($response)
+    {
+        $code     = $response->getStatusCode();
+        $reason   = $response->getReasonPhrase();
+        $contents = $response->getBody()->getContents();
+        return [$code, $contents];
+    }
+
     /**
      * @action = invalidate, delete
      * @type = url, cpcode
@@ -42,19 +50,19 @@ class CCUv3
         $_body       = json_encode($object);
         $_bodyLength = mb_strlen($_body);
         if ($_bodyLength >= self::MAX_REQUEST_BODY) {
-            throw new Exception("Body message is longer than maximum limit of " . self::MAX_REQUEST_BODY . ": $_bodyLength");
+            return[-1, "Body message is longer than maximum limit of " . self::MAX_REQUEST_BODY . ": $_bodyLength"];
         }
 
         if ($action != 'invalidate' && $action != 'delete') {
-            throw new Exception("Invalid action $action");
+            return[-1, "Invalid action $action"];
         }
 
         if ($type != 'url' && $type != 'cpcode') {
-            throw new Exception("Invalid type $type");
+            return[-1, "Invalid type $type"];
         }
 
         if ($network != 'production' && $network != 'staging') {
-            throw new Exception("Invalid network $network");
+            return[-1, "Invalid network $network"];
         }
 
         $_URL     = self::BASE_URL . "/{$action}/{$type}/{$network}";
@@ -62,7 +70,8 @@ class CCUv3
             'body'    => $_body,
             'headers' => ['Content-Type' => 'application/json'],
         ]);
-        return $response;
+
+        return $this->returnResponse($response);
     }
 
     public function invalidateCPCode($network, $object)
