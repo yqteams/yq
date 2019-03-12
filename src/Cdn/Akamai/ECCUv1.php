@@ -59,34 +59,39 @@ class ECCUv1
         return [$code, $contents];
     }
 
-    public function createRequest($url, $email_arr)
+    public function createRequest($list, $email_arr = [])
     {
-        $host = parse_url($url, PHP_URL_HOST);
-        $path = parse_url($url, PHP_URL_PATH);
-        if ($path == '/' || $path == '') {
-            return [-1, 'url目录为空'];
-        }
-        $paths    = explode("/", $path);
-        $metadata = '<?xml version="1.0"?><eccu>';
-        $endstr[] = '</eccu>';
-        foreach ($paths as $val) {
-            if ($val == '') {
-                continue;
+        $md = '<?xml version="1.0"?><eccu>';
+        foreach ($list as $url) {
+            $host = parse_url($url, PHP_URL_HOST);
+            $path = parse_url($url, PHP_URL_PATH);
+            if ($path == '/' || $path == '') {
+                return [-1, 'url目录为空'];
             }
-            if (!preg_match("/^[a-zA-Z1-9_]+$/", $val)) {
-                return [-1, 'url 目录 只允许是 英文字母/数字/下划线'];
+            $paths    = explode("/", $path);
+            $metadata = '';
+            $endstr   = [];
+            foreach ($paths as $val) {
+                if ($val == '') {
+                    continue;
+                }
+                if (!preg_match("/^[a-zA-Z0-9_]+$/", $val)) {
+                    return [-1, 'url 目录 只允许是 英文字母/数字/下划线'];
+                }
+                $metadata .= '<match:recursive-dirs value="' . $val . '">';
+                $endstr[] = '</match:recursive-dirs>';
             }
-            $metadata .= '<match:recursive-dirs value="' . $val . '">';
-            $endstr[] = '</match:recursive-dirs>';
+            if (count($endstr) === 0) {
+                return [-1, 'url目录为空'];
+            }
+            $metadata .= '<revalidate>now</revalidate>';
+            $endstr = array_reverse($endstr);
+            foreach ($endstr as $val) {
+                $metadata .= $val;
+            }
+            $md .= $metadata;
         }
-        if (count($endstr) === 1) {
-            return [-1, 'url目录为空'];
-        }
-        $metadata .= '<revalidate>now</revalidate>';
-        $endstr = array_reverse($endstr);
-        foreach ($endstr as $val) {
-            $metadata .= $val;
-        }
+        $md .= '</eccu>';
 
         $now    = time();
         $params = [
@@ -103,7 +108,7 @@ class ECCUv1
             // 刷新状态变更时通知邮箱
             'statusUpdateEmails'     => $email_arr,
             // 刷新目录内容
-            'metadata'               => $metadata,
+            'metadata'               => $md,
         ];
 
         $body     = json_encode($params);
