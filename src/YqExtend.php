@@ -170,7 +170,8 @@ class YqExtend
             $thisip = $_SERVER["REMOTE_ADDR"];
         }
 
-        return $thisip;
+        $thisip = explode(",", $thisip);
+        return trim($thisip[0]);
     }
 
     /**
