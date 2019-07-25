@@ -181,7 +181,7 @@ class CacheDriverFile implements CacheDriverInterface
             if (!empty($val) && isset($val[$key])) {
                 $data = (array) $val[$key];
                 if ($data['expired'] < time()) {
-                    $this->forget($key);
+                    $this->forget($key, $prefix);
                     return null;
                 }
                 return $data['data'];
