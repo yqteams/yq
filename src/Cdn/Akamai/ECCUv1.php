@@ -63,6 +63,7 @@ class ECCUv1
     {
         $md = '<?xml version="1.0"?><eccu>';
         foreach ($list as $url) {
+            $url  = trim($url);
             $host = parse_url($url, PHP_URL_HOST);
             $path = parse_url($url, PHP_URL_PATH);
             if ($path == '/' || $path == '') {
