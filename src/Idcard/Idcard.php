@@ -117,7 +117,7 @@ class Idcard
      */
     public function check()
     {
-        return $this->isValid || ($this->checkFormat() && $this->checkArea() && $this->checkBirthday() && $this->setValid(true));
+        return $this->isValid || ($this->checkFormat() && $this->checkArea() && $this->checkBirthday() && $this->checkCode() && $this->setValid(true));
     }
 
     /**
