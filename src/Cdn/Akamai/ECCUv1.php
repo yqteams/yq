@@ -76,7 +76,7 @@ class ECCUv1
                 if ($val == '') {
                     continue;
                 }
-                if (!preg_match("/^[a-zA-Z0-9_\-]+$/", $val)) {
+                if (!preg_match("/^[a-zA-Z0-9_\-\.]+$/", $val)) {
                     return [-1, 'url 目录 只允许是 英文字母/数字/下划线/破折号'];
                 }
                 $metadata .= '<match:recursive-dirs value="' . $val . '">';
