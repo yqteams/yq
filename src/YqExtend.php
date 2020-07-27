@@ -134,8 +134,8 @@ class YqExtend
     public static function buildOrderNo()
     {
         return (date('y') + date('m') + date('d')) .
-            str_pad((time() - strtotime(date('Y-m-d'))), 5, 0, STR_PAD_LEFT) .
-            substr(microtime(), 2, 6) . sprintf('%03d', rand(0, 999));
+        str_pad((time() - strtotime(date('Y-m-d'))), 5, 0, STR_PAD_LEFT) .
+        substr(microtime(), 2, 6) . sprintf('%03d', rand(0, 999));
     }
 
     /**
@@ -159,7 +159,7 @@ class YqExtend
             if (isset($_SERVER["HTTP_CLIENT_IP"])) {
                 $thisip = $_SERVER["HTTP_CLIENT_IP"];
             } else {
-                $thisip = isset($_SERVER["REMOTE_ADDR"])?$_SERVER["REMOTE_ADDR"]:'localhost';
+                $thisip = isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : 'localhost';
             }
         }
         if (strpos($thisip, "10.0.0.") !== false ||
@@ -231,7 +231,7 @@ class YqExtend
     {
         $idcard_class = Idcard::getInstance($idcard);
         if (!$idcard_class->check()) {
-            return false;//检查不通过
+            return false; //检查不通过
         }
 
         return [
@@ -241,5 +241,25 @@ class YqExtend
             'gender'   => $idcard_class->getGender(),
             'region'   => $idcard_class->getRegion(),
         ];
+    }
+
+    /**
+     * 判断ip是否落在某ip段下
+     * @param  string $ip    ipv4地址 eg. 127.0.0.1
+     * @param  string $range ipv4段 eg. 127.0.0.0/24
+     * @return boolean
+     */
+    public static function ipInRange($ip, $range)
+    {
+        if (strpos($range, '/') == false) {
+            $range .= '/32';
+        }
+        // $range is in IP/CIDR format eg 127.0.0.1/24
+        list($range, $netmask) = explode('/', $range, 2);
+        $range_decimal         = ip2long($range);
+        $ip_decimal            = ip2long($ip);
+        $wildcard_decimal      = pow(2, (32 - $netmask)) - 1;
+        $netmask_decimal       = ~$wildcard_decimal;
+        return (($ip_decimal & $netmask_decimal) == ($range_decimal & $netmask_decimal));
     }
 }
