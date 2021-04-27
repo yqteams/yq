@@ -9,7 +9,7 @@ class YqExtend
 {
     /**
      * 下划线转驼峰
-     * @param  string $str 下划线字符串
+     * @param string $str 下划线字符串
      * @return string      驼峰字符串
      */
     public static function convertUnderline($str)
@@ -22,7 +22,7 @@ class YqExtend
 
     /**
      * 驼峰转下划线
-     * @param  string $str 驼峰字符串
+     * @param string $str 驼峰字符串
      * @return string      下划线字符串
      */
     public static function humpToLine($str)
@@ -35,7 +35,7 @@ class YqExtend
 
     /**
      * 16位md5
-     * @param  string $str 待签名md5
+     * @param string $str 待签名md5
      * @return string
      */
     public static function md516($str)
@@ -45,7 +45,7 @@ class YqExtend
 
     /**
      * 随机拼接字符串
-     * @param  integer $len 拼接长度
+     * @param integer $len 拼接长度
      * @return string
      */
     public static function getRandom($len = 16)
@@ -61,7 +61,7 @@ class YqExtend
 
     /**
      * 随机拼接字母
-     * @param  integer $len 拼接长度
+     * @param integer $len 拼接长度
      * @return string
      */
     public static function getRandomLetter($len = 16)
@@ -77,7 +77,7 @@ class YqExtend
 
     /**
      * 随机拼接数字
-     * @param  integer $len 拼接长度
+     * @param integer $len 拼接长度
      * @return string
      */
     public static function getRandomInt($len = 16)
@@ -93,7 +93,7 @@ class YqExtend
 
     /**
      * 创建一个32位唯一值 可用于临时票据,订单等
-     * @param  string $id 标识
+     * @param string $id 标识
      * @return string
      */
     public static function uniqid32($id = 'uniqid')
@@ -104,7 +104,7 @@ class YqExtend
     /**
      * 得到一个唯一值，可用于订单等，此接口可视化强，出现相同值的情况可忽略
      * 标识(4位) 20180105 231106 013118(20位) 随机数字(8位) 补全到32位
-     * @param  integer $flag 标识
+     * @param integer $flag 标识
      * @return string
      */
     public static function uniqid($flag = 1000)
@@ -121,21 +121,19 @@ class YqExtend
     /**
      * 创建16位订单号
      * 支持时间范围 2010-01-01 00:00:00 至 2056-12-31 23:59:59
-     *
      * 1、年份两位数 + 月份 + 日 => 相加的和，最小数字为 10+1+1=12，最大数字为 56+12+31=99。 -----占2位
      * 2、获取今天凌晨到当前此刻经过了多少秒，不足5位前面补0。 -----占5位
      * 3、获取当前时间戳的微秒数，因为获取微秒数的格式是 0.76897100， 所以需要通过 substr 从第2位开始，取6位。 -----占6位
      * 4、随机取3位数字。 -----占3位
      * 以上串连起来，共16位
-     *
      * 这个方法生成的订单号，出现重复极少，在业务并发不大的情况下可采用此接口作为生成唯一订单
      * @return int
      */
     public static function buildOrderNo()
     {
         return (date('y') + date('m') + date('d')) .
-        str_pad((time() - strtotime(date('Y-m-d'))), 5, 0, STR_PAD_LEFT) .
-        substr(microtime(), 2, 6) . sprintf('%03d', rand(0, 999));
+            str_pad((time() - strtotime(date('Y-m-d'))), 5, 0, STR_PAD_LEFT) .
+            substr(microtime(), 2, 6) . sprintf('%03d', rand(0, 999));
     }
 
     /**
@@ -186,7 +184,27 @@ class YqExtend
      */
     public static function getIpInfo($ip)
     {
-        return Ipquery::getInstance()->search_offline($ip);
+        $ipinfo = new \Ip2Region();
+        $ret    = $ipinfo->btreeSearch($ip);
+        if (!$ret) {
+            return [
+                'country'  => '', // 国家
+                'region'   => '', // 区域
+                'province' => '', // 省份
+                'city'     => '', // 市
+                'isp'      => '', // 运营商
+            ];
+        }
+        $tmp  = explode("|", $ret['region']);
+        $data = [
+            'country'  => $tmp[0], // 国家
+            'region'   => $tmp[1], // 区域
+            'province' => $tmp[2], // 省份
+            'city'     => $tmp[3], // 市
+            'isp'      => $tmp[4], // 运营商
+        ];
+        return $data;
+//        return Ipquery::getInstance()->search_offline($ip);
     }
 
     /**
@@ -245,8 +263,8 @@ class YqExtend
 
     /**
      * 判断ip是否落在某ip段下
-     * @param  string $ip    ipv4地址 eg. 127.0.0.1
-     * @param  string $range ipv4段 eg. 127.0.0.0/24
+     * @param string $ip    ipv4地址 eg. 127.0.0.1
+     * @param string $range ipv4段 eg. 127.0.0.0/24
      * @return boolean
      */
     public static function ipInRange($ip, $range)
@@ -256,10 +274,10 @@ class YqExtend
         }
         // $range is in IP/CIDR format eg 127.0.0.1/24
         list($range, $netmask) = explode('/', $range, 2);
-        $range_decimal         = ip2long($range);
-        $ip_decimal            = ip2long($ip);
-        $wildcard_decimal      = pow(2, (32 - $netmask)) - 1;
-        $netmask_decimal       = ~$wildcard_decimal;
+        $range_decimal    = ip2long($range);
+        $ip_decimal       = ip2long($ip);
+        $wildcard_decimal = pow(2, (32 - $netmask)) - 1;
+        $netmask_decimal  = ~$wildcard_decimal;
         return (($ip_decimal & $netmask_decimal) == ($range_decimal & $netmask_decimal));
     }
 }
