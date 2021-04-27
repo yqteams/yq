@@ -38,7 +38,7 @@ class YqValidator
      * @param  string $phone 字符串
      * @return boolean
      */
-    public static function verifyPhone($phone = null)
+    public function verifyPhone($phone = null)
     {
         /**
          * 移动：134、135、136、137、138、139、150、151、152、157、158、159、182、183、184、187、188、178(4G)、147(上网卡);
