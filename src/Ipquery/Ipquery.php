@@ -13,6 +13,7 @@ class Ipquery
      */
     private static $_instance = null;
 
+    
     /**
      * 获取单例实例化对象
      * @return obj
