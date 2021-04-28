@@ -184,27 +184,7 @@ class YqExtend
      */
     public static function getIpInfo($ip)
     {
-        $ipinfo = new \Ip2Region();
-        $ret    = $ipinfo->btreeSearch($ip);
-        if (!$ret) {
-            return [
-                'country'  => '', // 国家
-                'region'   => '', // 区域
-                'province' => '', // 省份
-                'city'     => '', // 市
-                'isp'      => '', // 运营商
-            ];
-        }
-        $tmp  = explode("|", $ret['region']);
-        $data = [
-            'country'  => $tmp[0], // 国家
-            'region'   => $tmp[1], // 区域
-            'province' => $tmp[2], // 省份
-            'city'     => $tmp[3], // 市
-            'isp'      => $tmp[4], // 运营商
-        ];
-        return $data;
-//        return Ipquery::getInstance()->search_offline($ip);
+        return Ipquery::getInstance()->search_offline($ip);
     }
 
     /**

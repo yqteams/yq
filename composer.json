@@ -22,7 +22,6 @@
         "facebook/graph-sdk": "5.*",
         "google/apiclient": "v2.*",
         "akamai-open/edgegrid-client": "1.*",
-        "zoujingli/ip2region": "^1.0"
     },
     "autoload": {
         "psr-4": {
