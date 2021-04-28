@@ -184,7 +184,17 @@ class YqExtend
      */
     public static function getIpInfo($ip)
     {
-        return Ipquery::getInstance()->search_offline($ip);
+        $info = Ipquery::getInstance()->search_offline($ip);
+        if (empty($info)) {
+            return [
+                'country'  => '', // 国家
+                'region'   => '', // 区域
+                'province' => '', // 省份
+                'city'     => '', // 市
+                'isp'      => '', // 运营商
+            ];
+        }
+        return $info;
     }
 
     /**
