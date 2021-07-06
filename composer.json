@@ -20,7 +20,7 @@
         "phpoffice/phpexcel": "1.*",
         "swiftmailer/swiftmailer": "*",
         "facebook/graph-sdk": "5.*",
-        "google/apiclient": "v2.*",
+        "google/apiclient": "v2.9.2",
         "akamai-open/edgegrid-client": "1.*"
     },
     "autoload": {
