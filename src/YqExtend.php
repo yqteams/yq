@@ -151,13 +151,22 @@ class YqExtend
      */
     public static function getIP()
     {
-        if (isset($_SERVER["HTTP_X_FORWARDED_FOR"])) {
-            $thisip = $_SERVER["HTTP_X_FORWARDED_FOR"];
+        return self::getIpByData($_SERVER);
+    }
+
+    /**
+     * 获取客户端IP
+     * @return string
+     */
+    public static function getIPByData($data = [])
+    {
+        if (isset($data["HTTP_X_FORWARDED_FOR"])) {
+            $thisip = $data["HTTP_X_FORWARDED_FOR"];
         } else {
-            if (isset($_SERVER["HTTP_CLIENT_IP"])) {
-                $thisip = $_SERVER["HTTP_CLIENT_IP"];
+            if (isset($data["HTTP_CLIENT_IP"])) {
+                $thisip = $data["HTTP_CLIENT_IP"];
             } else {
-                $thisip = isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : 'localhost';
+                $thisip = isset($data["REMOTE_ADDR"]) ? $data["REMOTE_ADDR"] : 'localhost';
             }
         }
         if (strpos($thisip, "10.0.0.") !== false ||
@@ -165,7 +174,7 @@ class YqExtend
             strpos($thisip, "127.0.0.") !== false ||
             strpos($thisip, "172.16.0.") !== false
         ) {
-            $thisip = $_SERVER["REMOTE_ADDR"];
+            $thisip = $data["REMOTE_ADDR"];
         }
 
         $thisip = explode(",", $thisip);
