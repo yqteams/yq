@@ -14,7 +14,6 @@
     "require": {
         "php": ">=7.0.0",
         "elasticsearch/elasticsearch": "6.0.1",
-        "monolog/monolog": "1.*|2.*",
         "league/flysystem": "1.*",
         "intervention/image": "2.*",
         "phpoffice/phpexcel": "1.*",
@@ -22,6 +21,9 @@
         "facebook/graph-sdk": "5.*",
         "google/apiclient": "v2.9.2",
         "akamai-open/edgegrid-client": "1.*"
+    },
+    "replace": {
+        "monolog/monolog": "1.*|2.*"
     },
     "autoload": {
         "psr-4": {
