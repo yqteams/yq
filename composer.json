@@ -20,10 +20,8 @@
         "swiftmailer/swiftmailer": "*",
         "facebook/graph-sdk": "5.*",
         "google/apiclient": "v2.9.2",
-        "akamai-open/edgegrid-client": "1.*"
-    },
-    "replace": {
-        "monolog/monolog": "1.*|2.*"
+        "akamai-open/edgegrid-client": "1.*",
+        "monolog/monolog": "1.*"
     },
     "autoload": {
         "psr-4": {
